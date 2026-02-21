@@ -1,0 +1,22 @@
+# Data preparation
+ebooklib
+beautifulsoup4
+pymupdf
+
+# Dataset processing and verification
+tokenizers
+safetensors
+
+# Phase 2 dataset generation (API)
+openai
+python-dotenv
+
+# Training and inference
+torch
+transformers
+peft
+trl
+datasets
+accelerate
+bitsandbytes
+unsloth

@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+.cache/
+unsloth_compiled_cache/
+output/
+ministral-8b/
+books/
+ministral-8b-albert-camus/
+*.progress
