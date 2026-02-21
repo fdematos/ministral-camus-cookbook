@@ -9,4 +9,6 @@ output/
 ministral-8b/
 books/
 ministral-8b-albert-camus/
+albert-camus-chat-style-chat-dataset/
+data/
 *.progress
