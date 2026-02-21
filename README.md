@@ -337,6 +337,51 @@ Deployment notes:
 
 ---
 
+## GGUF export and system prompt
+
+The final model includes GGUF exports in `ministral-8b-albert-camus/gguf/`:
+
+| File | Size | Quantization |
+|---|---|---|
+| `ministral-camus-f16.gguf` | ~16 GB | F16 |
+| `ministral-camus-q8_0.gguf` | ~8.5 GB | Q8_0 |
+| `ministral-camus-q6_k.gguf` | ~6.5 GB | Q6_K |
+
+### System prompt
+
+The chat template embedded in the GGUF uses the same system prompt as the Phase 2 training data:
+
+> Écris en français, en prose sobre et lucide. Pas de listes, pas de titres, pas de markdown. Pas de citations. Ne mentionne aucun auteur ni aucune œuvre. 1-2 paragraphes courts.
+
+This was set by replacing the default Mistral `default_system_message` in `model-final/chat_template.jinja` before GGUF conversion. The original Mistral system message ("You are Ministral-3-8B-Instruct-2512...") was replaced to match the training data exactly. In conversation mode (`-cnv`), the system prompt is injected automatically by the chat template. No `--system-prompt` flag is needed.
+
+### GGUF conversion
+
+Conversion uses llama.cpp tools:
+
+```bash
+# Convert to F16
+python convert_hf_to_gguf.py model-final/ --outfile gguf/ministral-camus-f16.gguf --outtype f16
+
+# Quantize
+llama-quantize gguf/ministral-camus-f16.gguf gguf/ministral-camus-q8_0.gguf Q8_0
+llama-quantize gguf/ministral-camus-f16.gguf gguf/ministral-camus-q6_k.gguf Q6_K
+```
+
+Note: `tokenizer_config.json` required two fixes before conversion (Unsloth artifacts):
+- `tokenizer_class` changed from `TokenizersBackend` to `PreTrainedTokenizerFast`
+- Removed `extra_special_tokens` (list format incompatible with llama.cpp), `is_local`, `model_specific_special_tokens`, `backend`
+
+### Test with llama-cli
+
+```bash
+llama-cli \
+  -m ministral-8b-albert-camus/gguf/ministral-camus-q8_0.gguf \
+  -cnv --temp 0.7 --top-p 0.9 -ngl 99
+```
+
+---
+
 ## Known limitations
 
 - Evaluation is mostly qualitative/manual.
