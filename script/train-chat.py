@@ -14,6 +14,7 @@ MERGED_MODEL_PATH = ARTIFACTS_DIR / "model-style-merged"
 OUTPUT_DIR = ARTIFACTS_DIR / "lora-chat"
 DATASET_CORPUS_DEFAULT_PATH = DATASET_DIR / "chat-pairs-corpus-final-clean.jsonl"
 DATASET_LIGHT_DEFAULT_PATH = DATASET_DIR / "chat-pairs-light-boost-clean.jsonl"
+DATASET_CASUAL_DEFAULT_PATH = DATASET_DIR / "chat-pairs-casual.jsonl"
 
 MAX_SEQ_LENGTH = 2048
 
@@ -31,6 +32,12 @@ def parse_args():
         type=str,
         default=str(DATASET_LIGHT_DEFAULT_PATH),
         help="Chemin vers le dataset light clean (Phase 2)",
+    )
+    parser.add_argument(
+        "--dataset-casual-path",
+        type=str,
+        default=str(DATASET_CASUAL_DEFAULT_PATH),
+        help="Chemin vers le dataset casual (Phase 2)",
     )
     return parser.parse_args()
 
@@ -91,6 +98,7 @@ def main():
     dataset_files = [
         Path(args.dataset_corpus_path),
         Path(args.dataset_light_path),
+        Path(args.dataset_casual_path),
     ]
 
     print("=== Phase 2 : Chat Tuning LoRA ===\n")
@@ -106,7 +114,7 @@ def main():
     )
     print("  OK\n")
 
-    print("Configuration LoRA Phase 2...")
+    print("Configuration LoRA Phase 2 (chat)...")
     model = FastVisionModel.get_peft_model(
         model,
         r=32,
@@ -140,9 +148,10 @@ def main():
     dataset = load_chat_datasets(dataset_files)
 
     sample = dataset[0]["messages"]
-    print(f"  Rôles: {[m['role'] for m in sample]}")
-    print(f"  System: {sample[0]['content'][:80]}...")
-    print(f"  User: {sample[1]['content'][:80]}...")
+    roles = [m["role"] for m in sample]
+    print(f"  Rôles: {roles}")
+    for m in sample:
+        print(f"  {m['role'].capitalize()}: {m['content'][:80]}...")
     print()
 
     print("Application du chat template...")

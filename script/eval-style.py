@@ -98,14 +98,8 @@ def load_model(use_merged=False):
     return model, tokenizer
 
 
-def generate(model, tokenizer, prompt, system_prompt=None):
-    if system_prompt:
-        messages = [
-            {"role": "system", "content": [{"type": "text", "text": system_prompt}]},
-            {"role": "user", "content": [{"type": "text", "text": prompt}]},
-        ]
-    else:
-        messages = [{"role": "user", "content": [{"type": "text", "text": prompt}]}]
+def generate(model, tokenizer, prompt):
+    messages = [{"role": "user", "content": [{"type": "text", "text": prompt}]}]
 
     inputs = tokenizer.apply_chat_template(
         messages,
@@ -176,13 +170,11 @@ def test_modern_topics(model, tokenizer):
     print("=" * 70)
     print("\n✓ Le style doit persister même sur des sujets inconnus de Camus\n")
 
-    system_prompt = "Tu es un philosophe existentialiste. Réponds de manière concise et introspective."
-
     for i, topic in enumerate(MODERN_TOPICS, 1):
         print(f"\n--- Sujet {i}/{len(MODERN_TOPICS)} ---")
         print(f'Question: "{topic}"')
         print("\nRéponse:")
-        generate(model, tokenizer, topic, system_prompt)
+        generate(model, tokenizer, topic)
         print()
 
 

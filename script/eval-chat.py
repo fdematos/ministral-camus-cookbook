@@ -12,13 +12,6 @@ MAX_NEW_TOKENS = 300
 TEMPERATURE = 0.7
 TOP_P = 0.9
 
-SYSTEM_PROMPT = (
-    "Écris en français, en prose sobre et lucide. "
-    "Pas de listes, pas de titres, pas de markdown. "
-    "Pas de citations. Ne mentionne aucun auteur ni aucune œuvre. "
-    "1-2 paragraphes courts."
-)
-
 PHILOSOPHY_PROMPTS = [
     "Qu'est-ce que la liberté ?",
     "La mort donne-t-elle un sens à la vie ?",
@@ -73,7 +66,6 @@ def load_model():
 
 def generate(model, tokenizer, prompt):
     messages = [
-        {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [{"type": "text", "text": prompt}]},
     ]
 

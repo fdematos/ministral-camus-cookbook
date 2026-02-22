@@ -33,13 +33,6 @@ QUESTION_SYSTEM_PROMPT = (
     "Pas de commentaire, pas d'explication."
 )
 
-SYSTEM_PROMPT = (
-    "Écris en français, en prose sobre et lucide. "
-    "Pas de listes, pas de titres, pas de markdown. "
-    "Pas de citations. Ne mentionne aucun auteur ni aucune œuvre. "
-    "1-2 paragraphes courts."
-)
-
 QUESTION_GENERATION_PROMPT = (
     "Lis ce passage.\n\n"
     "Génère UNE question en français qu'un lecteur pourrait poser "
@@ -647,7 +640,6 @@ def generate_answer_lora(model, tokenizer, question, passage, source):
     else:
         prompt = ANSWER_GENERATION_PROMPT.format(question=question, passage=passage)
     messages = [
-        {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [{"type": "text", "text": prompt}]},
     ]
 
@@ -693,7 +685,6 @@ def generate_answer_lora(model, tokenizer, question, passage, source):
 def build_pair(question, answer):
     return {
         "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": question},
             {"role": "assistant", "content": answer},
         ]
